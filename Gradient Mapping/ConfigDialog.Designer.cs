@@ -255,7 +255,7 @@ namespace pyrochild.effects.gradientmapping
         private System.Windows.Forms.CheckBox chkWrapOffset;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private pyrochild.effects.common.GradientControl gradientControl;
-        private pyrochild.effects.common.PresetDropdown<Gradient> presetDropdown;
+        private pyrochild.effects.common.PresetDropdown<ConfigToken> presetDropdown;
         private System.Windows.Forms.CheckBox chkLockAlpha;
 
     }

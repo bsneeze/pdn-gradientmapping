@@ -6,7 +6,6 @@ using System.Drawing.Drawing2D;
 
 namespace pyrochild.effects.common
 {
-    [Serializable]
     public class Gradient : ICloneable
     {
         public struct GradientColor : IComparable<GradientColor>
@@ -34,63 +33,6 @@ namespace pyrochild.effects.common
         public Gradient()
         {
             colors = new List<GradientColor>();
-        }
-
-        public ColorBgra[] Colors
-        {
-            get
-            {
-                var retval = new ColorBgra[Count];
-                for (int i = 0; i < Count; i++)
-                {
-                    retval[i] = GetColor(i);
-                }
-                return retval;
-            }
-            set
-            {
-                double space = value.Length > 1 ? 1.0 / (value.Length - 1) : 0;
-
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (i < Count)
-                    {
-                        SetColor(i, value[i]);
-                        SetPosition(i, i * space);
-                    }
-                    else
-                    {
-                        Add(i * space, value[i]);
-                    }
-                }
-            }
-        }
-
-        public double[] Positions
-        {
-            get
-            {
-                var retval = new double[Count];
-                for (int i = 0; i < Count; i++)
-                {
-                    retval[i] = GetPosition(i);
-                }
-                return retval;
-            }
-            set
-            {
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (i < Count)
-                    {
-                        SetPosition(i, value[i]);
-                    }
-                    else
-                    {
-                        Add(value[i], ColorBgra.Black);
-                    }
-                }
-            }
         }
 
         public int Count

@@ -28,7 +28,7 @@ namespace pyrochild.effects.gradientmapping
 
         protected override void OnLoad(EventArgs e)
         {
-            presetDropdown = new PresetDropdown<Gradient>(Services, Path.GetFileNameWithoutExtension(GetType().Assembly.CodeBase), freshToken.Gradient, GetXao());
+            presetDropdown = new PresetDropdown<ConfigToken>(Services, Path.GetFileNameWithoutExtension(GetType().Assembly.CodeBase), freshToken, GetXao());
             // 
             // presetDropdown
             // 
@@ -62,19 +62,19 @@ namespace pyrochild.effects.gradientmapping
             rainbow.Add(2 / 3.0, ColorBgra.Blue);
             rainbow.Add(5 / 6.0, ColorBgra.Indigo);
             rainbow.Add(1,  ColorBgra.Violet);
-            presetDropdown.AddPreset(rainbow, "Rainbow");
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = rainbow }, "Rainbow");
 
             Gradient highcontrast = new Gradient();
             highcontrast.Add(0.6, ColorBgra.Black);
             highcontrast.Add(0.75, ColorBgra.White);
-            presetDropdown.AddPreset(highcontrast, "High Contrast");
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = highcontrast }, "High Contrast");
 
             Gradient hot = new Gradient();
             hot.Add(0.2, ColorBgra.Black);
             hot.Add(0.75, ColorBgra.Red);
             hot.Add(0.95, ColorBgra.Yellow);
             hot.Add(1, ColorBgra.White);
-            presetDropdown.AddPreset(hot, "Hot");
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = hot }, "Hot");
         }
 
         private static XmlAttributeOverrides GetXao()
@@ -103,9 +103,9 @@ namespace pyrochild.effects.gradientmapping
         //    if (gradient != null) gradient.DrawToGraphics(e.Graphics, e.Bounds);
         //}
 
-        void presetDropdown_PresetChanged(object sender, PresetChangedEventArgs<Gradient> e)
+        void presetDropdown_PresetChanged(object sender, PresetChangedEventArgs<ConfigToken> e)
         {
-            gradientControl.Gradient = e.Preset;
+            InitDialogFromToken(e.Preset);
             FinishTokenUpdate();
         }
 
@@ -131,10 +131,12 @@ namespace pyrochild.effects.gradientmapping
             {
                 OnLoad(EventArgs.Empty);
             }
-            presetDropdown.Current = token.Gradient;
 
             //set the preset name. if there's a preset, it will load it
-            presetDropdown.SetPresetByName(token.Preset);
+            if (!token.Preset.IsNullOrEmpty())
+            {
+                presetDropdown.SetPresetByName(token.Preset);
+            }
 
             ResumeTokenUpdates();
         }
@@ -173,7 +175,12 @@ namespace pyrochild.effects.gradientmapping
                 token.Wrap = chkWrapOffset.Checked;
                 token.LockAlpha = chkLockAlpha.Checked;
                 token.Gradient = gradientControl.Gradient;
+                if (token.Preset == presetDropdown.CurrentName)
+                {
+                    presetDropdown.Current = token;
+                }
                 token.Preset = presetDropdown.CurrentName;
+
             }
         }
 
@@ -220,7 +227,7 @@ namespace pyrochild.effects.gradientmapping
 
         private void gradientControl_ValueChanged(object sender, EventArgs e)
         {
-            presetDropdown.Current = gradientControl.Gradient;
+            presetDropdown.Current = (ConfigToken)theEffectToken;
             FinishTokenUpdate();
         }
 

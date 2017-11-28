@@ -23,7 +23,65 @@ namespace pyrochild.effects.gradientmapping
             }
         }
 
+        public ColorBgra[] Colors
+        {
+            get
+            {
+                var retval = new ColorBgra[gradient.Count];
+                for (int i = 0; i < gradient.Count; i++)
+                {
+                    retval[i] = gradient.GetColor(i);
+                }
+                return retval;
+            }
+            set
+            {
+                double space = value.Length > 1 ? 1.0 / (value.Length - 1) : 0;
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (i < gradient.Count)
+                    {
+                        gradient.SetColor(i, value[i]);
+                        gradient.SetPosition(i, i * space);
+                    }
+                    else
+                    {
+                        gradient.Add(i * space, value[i]);
+                    }
+                }
+            }
+        }
+
+        public double[] Positions
+        {
+            get
+            {
+                var retval = new double[gradient.Count];
+                for (int i = 0; i < gradient.Count; i++)
+                {
+                    retval[i] = gradient.GetPosition(i);
+                }
+                return retval;
+            }
+            set
+            {
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (i < gradient.Count)
+                    {
+                        gradient.SetPosition(i, value[i]);
+                    }
+                    else
+                    {
+                        gradient.Add(value[i], ColorBgra.Black);
+                    }
+                }
+            }
+        }
+
         private Channel inputChannel;
+        [XmlAttribute]
         public Channel InputChannel
         {
             get { return inputChannel; }
@@ -35,6 +93,7 @@ namespace pyrochild.effects.gradientmapping
         }
 
         private int offset;
+        [XmlAttribute]
         public int Offset
         {
             get { return offset; }
@@ -46,6 +105,7 @@ namespace pyrochild.effects.gradientmapping
         }
 
         private bool wrap;
+        [XmlAttribute]
         public bool Wrap
         {
             get { return wrap; }
@@ -78,11 +138,11 @@ namespace pyrochild.effects.gradientmapping
             return new UnaryPixelHistogramOps.GradientMap(Gradient, InputChannel, Wrap, LockAlpha, Offset);
         }
 
+        [XmlAttribute]
         public bool LockAlpha { get; set; }
 
         public ConfigToken()
         {
-            Preset = "Default";
             inputChannel = Channel.L;
             wrap = true;
             LockAlpha = false;
