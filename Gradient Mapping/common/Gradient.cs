@@ -9,7 +9,7 @@ namespace pyrochild.effects.common
     [Serializable]
     public class Gradient : ICloneable
     {
-        public  class GradientColor : IComparable<GradientColor>
+        public struct GradientColor : IComparable<GradientColor>
         {
             public double Position;
             public ColorBgra Color;
@@ -198,7 +198,9 @@ namespace pyrochild.effects.common
         /// <returns>The new index of the control point that was moved</returns>
         public int SetPosition(int index, double position)
         {
-            colors[index].Position = position;
+            GradientColor gc = colors[index];
+            gc.Position = position;
+            colors[index] = gc;
 
             while (index + 1 < Count && position > colors[index + 1].Position)
             {
@@ -232,7 +234,11 @@ namespace pyrochild.effects.common
         public void SetColor(int index, ColorBgra color)
         {
             if (index >= 0 && index < Count)
-                colors[index].Color = color;
+            {
+                GradientColor gc = colors[index];
+                gc.Color = color;
+                colors[index] = gc;
+            }
         }
 
         public void DrawToGraphics(Graphics g, Rectangle bounds)
