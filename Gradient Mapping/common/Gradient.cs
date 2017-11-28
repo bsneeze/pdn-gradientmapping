@@ -139,7 +139,7 @@ namespace pyrochild.effects.common
                         index2 = i;
                     }
                 }
-                if (index1 == index2)
+                if (colors[index1].Position == colors[index2].Position)
                 {
                     return colors[index1].Color;
                 }
