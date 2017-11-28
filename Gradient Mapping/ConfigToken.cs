@@ -89,7 +89,6 @@ namespace pyrochild.effects.gradientmapping
             offset = 0;
             gradient = new Gradient();
             gradient.SetDefault();
-            gradient.Spread();
         }
 
         public ConfigToken(ConfigToken toCopy)

@@ -41,6 +41,9 @@ namespace pyrochild.effects.gradientmapping
         public override void Render(EffectConfigToken parameters, RenderArgs dstArgs, RenderArgs srcArgs, Rectangle[] rois, int startIndex, int length)
         {
             ConfigToken token = parameters as ConfigToken;
+
+            if (token.Gradient.Count == 0) return;
+
             UnaryPixelOp uop = token.Uop;
 
             for (int i = startIndex; i < startIndex + length; ++i)
