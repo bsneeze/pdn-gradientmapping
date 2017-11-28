@@ -36,6 +36,8 @@ namespace pyrochild.effects.gradientmapping
             }
             set
             {
+                if (value.Length < gradient.Count) gradient.Clear();
+
                 double space = value.Length > 1 ? 1.0 / (value.Length - 1) : 0;
 
                 for (int i = 0; i < value.Length; i++)
