@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Zach Walker, a.k.a. pyrochild")]
 [assembly: AssemblyProduct("Gradient Mapping")]
-[assembly: AssemblyCopyright("Copyright © 2007-2016 Zach Walker")]
+[assembly: AssemblyCopyright("Copyright © 2007-2017 Zach Walker")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

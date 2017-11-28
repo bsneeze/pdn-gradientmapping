@@ -1,51 +1,57 @@
 using PaintDotNet;
 using PaintDotNet.Effects;
 using pyrochild.effects.common;
+using System;
+using System.Xml.Serialization;
 
 namespace pyrochild.effects.gradientmapping
 {
+    [Serializable]
+    [XmlRoot("Gradient")]
     public class ConfigToken : EffectConfigToken
     {
-        private Gradient gGradient;
+        private Gradient gradient;
+        
+        [XmlIgnore]
         public Gradient Gradient
         {
-            get { return gGradient; }
+            get { return gradient; }
             set
             {
-                gGradient = value;
+                gradient = value;
                 uop = null;
             }
         }
 
-        private Channel inputchannel;
+        private Channel inputChannel;
         public Channel InputChannel
         {
-            get { return inputchannel; }
+            get { return inputChannel; }
             set
             {
-                inputchannel = value;
+                inputChannel = value;
                 uop = null;
             }
         }
 
-        private int iOffset;
+        private int offset;
         public int Offset
         {
-            get { return iOffset; }
+            get { return offset; }
             set
             {
-                iOffset = value;
+                offset = value;
                 uop = null;
             }
         }
 
-        private bool bWrap;
+        private bool wrap;
         public bool Wrap
         {
-            get { return bWrap; }
+            get { return wrap; }
             set
             {
-                bWrap = value;
+                wrap = value;
                 uop = null;
             }
         }
@@ -64,6 +70,7 @@ namespace pyrochild.effects.gradientmapping
             }
         }
 
+        [XmlIgnore]
         public string Preset { get; set; }
 
         private UnaryPixelOp MakeUop()
@@ -76,23 +83,23 @@ namespace pyrochild.effects.gradientmapping
         public ConfigToken()
         {
             Preset = "Default";
-            inputchannel = Channel.L;
-            bWrap = true;
+            inputChannel = Channel.L;
+            wrap = true;
             LockAlpha = false;
-            iOffset = 0;
-            gGradient = new Gradient();
-            gGradient.SetDefault();
-            gGradient.Spread();
+            offset = 0;
+            gradient = new Gradient();
+            gradient.SetDefault();
+            gradient.Spread();
         }
 
         public ConfigToken(ConfigToken toCopy)
         {
             Preset = toCopy.Preset;
-            inputchannel = toCopy.inputchannel;
-            bWrap = toCopy.bWrap;
+            inputChannel = toCopy.inputChannel;
+            wrap = toCopy.wrap;
             LockAlpha = toCopy.LockAlpha;
-            iOffset = toCopy.iOffset;
-            gGradient = (Gradient)toCopy.gGradient.Clone();
+            offset = toCopy.offset;
+            gradient = (Gradient)toCopy.gradient.Clone();
         }
 
         public override object Clone()

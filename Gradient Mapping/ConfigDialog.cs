@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using PaintDotNet.Effects;
 using PaintDotNet;
+using PaintDotNet.Effects;
 using pyrochild.effects.common;
-using System.Resources;
-using System.Xml.Serialization;
+using System;
 using System.IO;
+using System.Resources;
+using System.Windows.Forms;
+using System.Xml.Serialization;
 using IShellService = PaintDotNet.AppModel.IShellService;
 
 namespace pyrochild.effects.gradientmapping
@@ -59,26 +54,14 @@ namespace pyrochild.effects.gradientmapping
 
         private void AddDefaultPresets()
         {
-            //presetDropdown.SuspendEvents();
             Gradient rainbow = new Gradient();
-            rainbow.Positions.AddRange(new double[]{
-                0,
-                1/6.0,
-                1/3.0,
-                .5,
-                2/3.0,
-                5/6.0,
-                1
-            });
-            rainbow.Colors.AddRange(new ColorBgra[]{
-                ColorBgra.Red,
-                ColorBgra.Orange,
-                ColorBgra.Yellow,
-                ColorBgra.Lime,
-                ColorBgra.Blue,
-                ColorBgra.Indigo,
-                ColorBgra.Violet
-            });
+            rainbow.Add(0, ColorBgra.Red);
+            rainbow.Add(1 / 6.0, ColorBgra.Orange);
+            rainbow.Add(1 / 3.0, ColorBgra.Yellow);
+            rainbow.Add(.5, ColorBgra.Lime);
+            rainbow.Add(2 / 3.0, ColorBgra.Blue);
+            rainbow.Add(5 / 6.0, ColorBgra.Indigo);
+            rainbow.Add(1,  ColorBgra.Violet);
             presetDropdown.AddPreset(rainbow, "Rainbow");
 
             Gradient highcontrast = new Gradient();
@@ -92,8 +75,6 @@ namespace pyrochild.effects.gradientmapping
             hot.Add(0.95, ColorBgra.Yellow);
             hot.Add(1, ColorBgra.White);
             presetDropdown.AddPreset(hot, "Hot");
-            //presetDropdown.PopulateDropdown();
-            //presetDropdown.ResumeEvents();
         }
 
         private static XmlAttributeOverrides GetXao()

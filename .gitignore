@@ -2,3 +2,5 @@ Gradient Mapping/bin/
 Gradient Mapping/obj/
 *.user
 *.suo
+*.lock
+.vs/

@@ -123,19 +123,16 @@ namespace pyrochild.effects.common
 
                     if (tracking)
                     {
-                        gradient.Positions[selectedIndex] = ((e.X - nubSize) / (float)gWidth).Clamp(0, 1);
-                        //if (e.X != lastMouse.X)
-                        {
-                            OnValueChanged();
-                        }
+                        selectedIndex = gradient.SetPosition(selectedIndex, ((e.X - nubSize) / (float)gWidth).Clamp(0, 1));
+                        OnValueChanged();
                     }
                     else
                     {
                         selectedIndex = -1;
                         for (int i = 0; i < gradient.Count; i++)
                         {
-                            if (e.X > gradient.Positions[i] * gWidth + nubSize / 2
-                                && e.X < gradient.Positions[i] * gWidth + 3 * nubSize / 2)
+                            if (e.X > gradient.GetPosition(i) * gWidth + nubSize / 2
+                                && e.X < gradient.GetPosition(i) * gWidth + 3 * nubSize / 2)
                             {
                                 selectedIndex = i;
                             }
@@ -206,7 +203,7 @@ namespace pyrochild.effects.common
 
                     if (selectedIndex >= 0 && selectedIndex < gradient.Count)
                     {
-                        gradient.Positions[selectedIndex] = (gradient.Positions[selectedIndex] - pixeldelta).Clamp(0, 1);
+                        selectedIndex = gradient.SetPosition(selectedIndex, (gradient.GetPosition(selectedIndex) - pixeldelta).Clamp(0, 1));
                         handled = true;
                         cmdkeydown = true;
                         Invalidate();
@@ -216,7 +213,7 @@ namespace pyrochild.effects.common
                 case Keys.Right:
                     if (selectedIndex >= 0 && selectedIndex < gradient.Count)
                     {
-                        gradient.Positions[selectedIndex] = (gradient.Positions[selectedIndex] + pixeldelta).Clamp(0, 1);
+                        selectedIndex = gradient.SetPosition(selectedIndex, (gradient.GetPosition(selectedIndex) + pixeldelta).Clamp(0, 1));
                         handled = true;
                         cmdkeydown = true;
                         Invalidate();
@@ -243,9 +240,10 @@ namespace pyrochild.effects.common
                 case Keys.Up:
                     if (selectedIndex >= 0 && selectedIndex < gradient.Count)
                     {
-                        gradient.Colors[selectedIndex] = gradient.Colors[selectedIndex].NewAlpha((gradient.Colors[selectedIndex].A + alphadelta).ClampToByte());
-                        handled = true;
+                        ColorBgra currentColor = gradient.GetColor(selectedIndex);
+                        gradient.SetColor(selectedIndex, currentColor.NewAlpha((currentColor.A + alphadelta).ClampToByte()));
                         cmdkeydown = true;
+                        handled = true;
                         Invalidate();
                     }
                     break;
@@ -253,7 +251,8 @@ namespace pyrochild.effects.common
                 case Keys.Down:
                     if (selectedIndex >= 0 && selectedIndex < gradient.Count)
                     {
-                        gradient.Colors[selectedIndex] = gradient.Colors[selectedIndex].NewAlpha((gradient.Colors[selectedIndex].A - alphadelta).ClampToByte());
+                        ColorBgra currentColor = gradient.GetColor(selectedIndex);
+                        gradient.SetColor(selectedIndex, currentColor.NewAlpha((currentColor.A - alphadelta).ClampToByte()));
                         handled = true;
                         cmdkeydown = true;
                         Invalidate();
@@ -362,7 +361,6 @@ namespace pyrochild.effects.common
 
             if (gradient != null && gradient.Count > 0)
             {
-                selectedIndex = gradient.Sort(selectedIndex);
                 Rectangle rGradient = Rectangle.Inflate(rOutline, -1, -1);
                 gradient.DrawToGraphics(g, rGradient);
 
@@ -370,15 +368,16 @@ namespace pyrochild.effects.common
 
                 for (int i = 0; i < gradient.Count; i++)
                 {
-                    selectednuboutlinepen.Color = (gradient.Colors[i]).ToColor().ToOpaqueColor();
+                    double position = gradient.GetPosition(i);
+                    selectednuboutlinepen.Color = (gradient.GetColor(i)).ToColor().ToOpaqueColor();
                     nubbrush.Color = selectednuboutlinepen.Color;
 
-                    //if nubs are very close or on top of one another, make one slightly bigger to 
-                    //prevent the stacking problem...
+                    // if nubs are very close or on top of one another, make one slightly bigger 
+                    // so they can be seen
                     float ournubSize = nubSize;
-                    if (i < gradient.Count - 1 && (gradient.Positions[i + 1] - gradient.Positions[i]) <= nubSize / (float)rGradient.Width)
+                    if (i < gradient.Count - 1 && (gradient.GetPosition(i + 1) - position) <= nubSize / (float)rGradient.Width)
                     {
-                        float diff = 10 - (float)(gradient.Positions[i + 1] - gradient.Positions[i]) * rGradient.Width;
+                        float diff = 10 - (float)(gradient.GetPosition(i + 1) - position) * rGradient.Width;
                         ournubSize += (float)(0.5 * nubSize * Math.Sin(diff * Math.PI / 20));
                     }
                     float offsetX = 0.5f * ournubSize;
@@ -386,20 +385,20 @@ namespace pyrochild.effects.common
 
                     //it's a triangle. for the top nub.
                     PointF[] markerPolygonTop = new PointF[] {
-                                    new PointF((float)(gradient.Positions[i] * (rGradient.Width + 1) + nubSize),
+                                    new PointF((float)(position * (rGradient.Width + 1) + nubSize),
                                         (rGradient.Top+3)),
-                                    new PointF((float)(gradient.Positions[i] * (rGradient.Width + 1) - offsetX + nubSize),
+                                    new PointF((float)(position * (rGradient.Width + 1) - offsetX + nubSize),
                                         (rGradient.Top - offsetY+3)),
-                                    new PointF((float)(gradient.Positions[i] * (rGradient.Width + 1) + offsetX + nubSize),
+                                    new PointF((float)(position * (rGradient.Width + 1) + offsetX + nubSize),
                                         (rGradient.Top - offsetY+3)) };
 
                     //it's another triangle. for the bottom.
                     PointF[] markerPolygonBottom = new PointF[] {
-                                    new PointF((float)(gradient.Positions[i] * (rGradient.Width + 1) + nubSize),
+                                    new PointF((float)(position * (rGradient.Width + 1) + nubSize),
                                         (rGradient.Bottom - 3)),
-                                    new PointF((float)(gradient.Positions[i] * (rGradient.Width + 1) + nubSize - offsetX),
+                                    new PointF((float)(position * (rGradient.Width + 1) + nubSize - offsetX),
                                         (rGradient.Bottom - 3 + offsetY)),
-                                    new PointF((float)(gradient.Positions[i] * (rGradient.Width + 1) + nubSize + offsetX),
+                                    new PointF((float)(position * (rGradient.Width + 1) + nubSize + offsetX),
                                         (rGradient.Bottom - 3 + offsetY)) };
 
                     if (selectedIndex == i)
@@ -429,12 +428,11 @@ namespace pyrochild.effects.common
         private void AddColor(Point position)
         {
             ColorDialog cd = new ColorDialog(true);
+            cd.Color = ColorBgra.Black;
             if (cd.ShowDialog(this) == DialogResult.OK)
             {
                 int gWidth = ClientRectangle.Width - 1 - 2 * nubSize;
-                gradient.Positions.Add(((position.X - nubSize / 2f) / gWidth).Clamp(0, 1));
-                gradient.Colors.Add(cd.Color);
-                gradient.Sort();
+                gradient.Add(((position.X - nubSize / 2f) / gWidth).Clamp(0, 1), cd.Color);
                 Invalidate();
                 OnValueChanged();
             }
@@ -443,10 +441,10 @@ namespace pyrochild.effects.common
         private void ChangeColor(int index)
         {
             ColorDialog cd = new ColorDialog(true);
-            cd.Color = gradient.Colors[index];
+            cd.Color = gradient.GetColor(index);
             if (cd.ShowDialog(this) == DialogResult.OK)
             {
-                gradient.Colors[index] = cd.Color;
+                gradient.SetColor(index, cd.Color);
                 Invalidate();
                 OnValueChanged();
             }
@@ -462,7 +460,7 @@ namespace pyrochild.effects.common
             {
                 int gWidth = ClientRectangle.Width - 1 - 2 * nubSize;
 
-                return new Point((int)(gradient.Positions[index] * gWidth) + nubSize, this.Height);
+                return new Point((int)(gradient.GetPosition(index) * gWidth) + nubSize, this.Height);
             }
         }
 
