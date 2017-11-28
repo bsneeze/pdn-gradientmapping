@@ -45,7 +45,12 @@ namespace pyrochild.effects.common
         
         public void Reverse()
         {
-            colors.ForEach(color => color.Position = 1 - color.Position);
+            for(int i = 0; i < Count; i++)
+            {
+                GradientColor gc = colors[i];
+                gc.Position = 1 - gc.Position;
+                colors[i] = gc;
+            }
             colors.Reverse();
         }
 
