@@ -12,13 +12,13 @@ namespace pyrochild.effects.gradientmapping
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+            base.OnDispose(disposing);
         }
 
         #region Windows Form Designer generated code
@@ -205,6 +205,7 @@ namespace pyrochild.effects.gradientmapping
             this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(356, 243);
             this.Controls.Add(this.chkLockAlpha);
@@ -220,7 +221,6 @@ namespace pyrochild.effects.gradientmapping
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.gradientControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            this.MaximumSize = new System.Drawing.Size(32767, 281);
             this.MinimumSize = new System.Drawing.Size(291, 281);
             this.Name = "ConfigDialog";
             this.Controls.SetChildIndex(this.gradientControl, 0);

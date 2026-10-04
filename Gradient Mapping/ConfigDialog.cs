@@ -10,31 +10,39 @@ using IShellService = PaintDotNet.AppModel.IShellService;
 
 namespace pyrochild.effects.gradientmapping
 {
-    public partial class ConfigDialog : EffectConfigDialog
+    public partial class ConfigDialog : EffectConfigForm<GradientMapping, ConfigToken>
     {
         ResourceManager resourcemanager = Properties.Resources.ResourceManager;
         ConfigToken freshToken = new ConfigToken();
 
+        private float DpiScale => this.DeviceDpi / 96f;
+
         public ConfigDialog()
         {
             InitializeComponent();
+            this.Load += (themeSender, themeArgs) => ThemeHelper.Apply(this);
+            this.Shown += (themeSender, themeArgs) => ThemeHelper.Apply(this);
             this.Text = GradientMapping.StaticDialogName;
-            
+
             foreach (string s in Enum.GetNames(typeof(Channel)))
             {
                 modeComboBox.Items.Add(resourcemanager.GetString(s));
             }
         }
 
-        protected override void OnLoad(EventArgs e)
+        private void EnsurePresetDropdown()
         {
-            presetDropdown = new PresetDropdown<ConfigToken>(Services, Path.GetFileNameWithoutExtension(GetType().Assembly.CodeBase), freshToken, GetXao());
-            // 
+            if (presetDropdown != null) return;
+
+            presetDropdown = new PresetDropdown<ConfigToken>(Services, Path.GetFileNameWithoutExtension(GetType().Assembly.Location), freshToken, GetXao());
+            //
             // presetDropdown
-            // 
+            //
             this.presetDropdown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.presetDropdown.Location = new System.Drawing.Point(5, 39);
+            // presetDropdown is created in code and misses the designer's DPI scaling, so position it
+            // from gradientControl's scaled bounds.
+            this.presetDropdown.Location = new System.Drawing.Point(gradientControl.Left + 4, gradientControl.Bottom + 1);
             this.presetDropdown.Name = "presetDropdown";
             //this.presetDropdown.Size = new System.Drawing.Size(263, 21);
             this.presetDropdown.Size = this.modeComboBox.Size;
@@ -49,7 +57,6 @@ namespace pyrochild.effects.gradientmapping
             presetDropdown.PresetChanged += presetDropdown_PresetChanged;
             presetDropdown.OnPresetChanged();
             ResumeTokenUpdates();
-            base.OnLoad(e);
         }
 
         private void AddDefaultPresets()
@@ -75,6 +82,70 @@ namespace pyrochild.effects.gradientmapping
             hot.Add(0.95, ColorBgra.Yellow);
             hot.Add(1, ColorBgra.White);
             presetDropdown.AddPreset(new ConfigToken() { Gradient = hot }, "Hot");
+
+            Gradient synthwave = new Gradient();
+            synthwave.Add(0, ColorBgra.Indigo);
+            synthwave.Add(1 / 3.0, ColorBgra.DeepPink);
+            synthwave.Add(2 / 3.0, ColorBgra.OrangeRed);
+            synthwave.Add(1, ColorBgra.Cyan);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = synthwave }, "Synthwave");
+
+            Gradient sepia = new Gradient();
+            sepia.Add(0, ColorBgra.FromBgr(9, 17, 29));
+            sepia.Add(0.5, ColorBgra.FromBgr(20, 66, 112));
+            sepia.Add(1, ColorBgra.FromBgr(151, 196, 222));
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = sepia }, "Sepia");
+
+            Gradient duotoneBlue = new Gradient();
+            duotoneBlue.Add(0, ColorBgra.Navy);
+            duotoneBlue.Add(1, ColorBgra.White);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = duotoneBlue }, "Duotone Blue");
+
+            Gradient thermal = new Gradient();
+            thermal.Add(0, ColorBgra.Black);
+            thermal.Add(0.2, ColorBgra.Blue);
+            thermal.Add(0.4, ColorBgra.Lime);
+            thermal.Add(0.6, ColorBgra.Yellow);
+            thermal.Add(0.8, ColorBgra.Red);
+            thermal.Add(1, ColorBgra.White);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = thermal }, "Thermal");
+
+            Gradient cyanotype = new Gradient();
+            cyanotype.Add(0, ColorBgra.FromBgr(60, 20, 10));
+            cyanotype.Add(1, ColorBgra.FromBgr(250, 235, 220));
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = cyanotype }, "Cyanotype");
+
+            Gradient posterizeGrays = new Gradient();
+            posterizeGrays.Add(0, ColorBgra.Black);
+            posterizeGrays.Add(1 / 3.0, ColorBgra.FromBgr(85, 85, 85));
+            posterizeGrays.Add(2 / 3.0, ColorBgra.FromBgr(170, 170, 170));
+            posterizeGrays.Add(1, ColorBgra.White);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = posterizeGrays }, "Posterize Grays");
+
+            Gradient cottonCandy = new Gradient();
+            cottonCandy.Add(0, ColorBgra.FromBgr(213, 182, 255));
+            cottonCandy.Add(0.5, ColorBgra.FromBgr(230, 170, 200));
+            cottonCandy.Add(1, ColorBgra.FromBgr(255, 220, 150));
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = cottonCandy }, "Cotton Candy");
+
+            Gradient toxic = new Gradient();
+            toxic.Add(0, ColorBgra.Black);
+            toxic.Add(0.5, ColorBgra.FromBgr(20, 255, 100));
+            toxic.Add(1, ColorBgra.GreenYellow);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = toxic }, "Toxic");
+
+            Gradient fire = new Gradient();
+            fire.Add(0, ColorBgra.Black);
+            fire.Add(0.4, ColorBgra.Red);
+            fire.Add(0.7, ColorBgra.OrangeRed);
+            fire.Add(1, ColorBgra.Yellow);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = fire }, "Fire");
+
+            Gradient vaporwave = new Gradient();
+            vaporwave.Add(0, ColorBgra.Cyan);
+            vaporwave.Add(0.5, ColorBgra.Magenta);
+            vaporwave.Add(1, ColorBgra.Indigo);
+            presetDropdown.AddPreset(new ConfigToken() { Gradient = vaporwave }, "Vaporwave");
         }
 
         private static XmlAttributeOverrides GetXao()
@@ -105,14 +176,13 @@ namespace pyrochild.effects.gradientmapping
 
         void presetDropdown_PresetChanged(object sender, PresetChangedEventArgs<ConfigToken> e)
         {
-            InitDialogFromToken(e.Preset);
-            FinishTokenUpdate();
+            OnUpdateDialogFromToken(e.Preset);
+            UpdateTokenFromDialog();
         }
 
-        protected override void InitDialogFromToken(EffectConfigToken effectToken)
+        protected override void OnUpdateDialogFromToken(ConfigToken token)
         {
             SuspendTokenUpdates();
-            ConfigToken token = (ConfigToken)effectToken;
 
             gradientControl.Gradient = token.Gradient;
             foreach (string s in Enum.GetNames(typeof(Channel)))
@@ -127,13 +197,10 @@ namespace pyrochild.effects.gradientmapping
             udOffset.Value = token.Offset;
 
             //first set the gradient
-            if (presetDropdown == null)
-            {
-                OnLoad(EventArgs.Empty);
-            }
+            EnsurePresetDropdown();
 
             //set the preset name. if there's a preset, it will load it
-            if (!token.Preset.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(token.Preset))
             {
                 presetDropdown.SetPresetByName(token.Preset);
             }
@@ -153,17 +220,15 @@ namespace pyrochild.effects.gradientmapping
         }
         private bool TokenUpdatesSuspended { get { return suspendTokenUpdatesCount > 0; } }
 
-        protected override void InitialInitToken()
+        protected override EffectConfigToken OnCreateInitialToken()
         {
-            theEffectToken = new ConfigToken();
+            return new ConfigToken();
         }
 
-        protected override void InitTokenFromDialog()
+        protected override void OnUpdateTokenFromDialog(ConfigToken token)
         {
             if (!TokenUpdatesSuspended)
             {
-                ConfigToken token = (ConfigToken)theEffectToken;
-
                 foreach (string s in Enum.GetNames(typeof(Channel)))
                 {
                     if (modeComboBox.SelectedItem != null && modeComboBox.SelectedItem.ToString() == resourcemanager.GetString(s))
@@ -196,12 +261,12 @@ namespace pyrochild.effects.gradientmapping
 
         private void modeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Services.GetService<IShellService>().LaunchUrl(this, "http://forums.getpaint.net/index.php?showtopic=7291");
+            ((IShellService)Services.GetService(typeof(IShellService))).LaunchUrl(this, "http://forums.getpaint.net/index.php?showtopic=7291");
         }
 
         private void sldOffset_Scroll(object sender, EventArgs e)
@@ -212,7 +277,7 @@ namespace pyrochild.effects.gradientmapping
         private void udOffset_ValueChanged(object sender, EventArgs e)
         {
             sldOffset.Value = (int)udOffset.Value;
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void btnResetOffset_Click(object sender, EventArgs e)
@@ -222,18 +287,20 @@ namespace pyrochild.effects.gradientmapping
 
         private void chkWrap_CheckedChanged(object sender, EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void gradientControl_ValueChanged(object sender, EventArgs e)
         {
-            presetDropdown.Current = (ConfigToken)theEffectToken;
-            FinishTokenUpdate();
+            ConfigToken current = new ConfigToken();
+            OnUpdateTokenFromDialog(current);
+            presetDropdown.Current = current;
+            UpdateTokenFromDialog();
         }
 
         private void chkLockAlpha_CheckedChanged(object sender, EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
     }
 }
