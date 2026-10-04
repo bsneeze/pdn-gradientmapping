@@ -9,7 +9,8 @@ namespace pyrochild.effects.common
 {
     public partial class GradientControl : Control
     {
-        private const int nubSize = 10;
+        private float DpiScale => this.DeviceDpi / 96f;
+        private int nubSize => Math.Max(10, (int)Math.Round(10 * DpiScale));
 
         private Gradient gradient;
         private int selectedIndex = -1;
@@ -123,7 +124,7 @@ namespace pyrochild.effects.common
 
                     if (tracking)
                     {
-                        selectedIndex = gradient.SetPosition(selectedIndex, ((e.X - nubSize) / (float)gWidth).Clamp(0, 1));
+                        selectedIndex = gradient.SetPosition(selectedIndex, Math.Clamp((e.X - nubSize) / (float)gWidth, 0, 1));
                         OnValueChanged();
                     }
                     else
@@ -203,7 +204,7 @@ namespace pyrochild.effects.common
 
                     if (selectedIndex >= 0 && selectedIndex < gradient.Count)
                     {
-                        selectedIndex = gradient.SetPosition(selectedIndex, (gradient.GetPosition(selectedIndex) - pixeldelta).Clamp(0, 1));
+                        selectedIndex = gradient.SetPosition(selectedIndex, Math.Clamp(gradient.GetPosition(selectedIndex) - pixeldelta, 0, 1));
                         handled = true;
                         cmdkeydown = true;
                         Invalidate();
@@ -213,7 +214,7 @@ namespace pyrochild.effects.common
                 case Keys.Right:
                     if (selectedIndex >= 0 && selectedIndex < gradient.Count)
                     {
-                        selectedIndex = gradient.SetPosition(selectedIndex, (gradient.GetPosition(selectedIndex) + pixeldelta).Clamp(0, 1));
+                        selectedIndex = gradient.SetPosition(selectedIndex, Math.Clamp(gradient.GetPosition(selectedIndex) + pixeldelta, 0, 1));
                         handled = true;
                         cmdkeydown = true;
                         Invalidate();
@@ -432,7 +433,7 @@ namespace pyrochild.effects.common
             if (cd.ShowDialog(this) == DialogResult.OK)
             {
                 int gWidth = ClientRectangle.Width - 1 - 2 * nubSize;
-                gradient.Add(((position.X - nubSize / 2f) / gWidth).Clamp(0, 1), cd.Color);
+                gradient.Add(Math.Clamp((position.X - nubSize / 2f) / gWidth, 0, 1), cd.Color);
                 Invalidate();
                 OnValueChanged();
             }
