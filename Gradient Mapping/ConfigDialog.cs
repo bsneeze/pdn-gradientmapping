@@ -254,7 +254,7 @@ namespace pyrochild.effects.gradientmapping
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            ((IShellService)Services.GetService(typeof(IShellService))).LaunchUrl(this, "http://forums.getpaint.net/index.php?showtopic=7291");
+            ((IShellService)Services.GetService(typeof(IShellService))).LaunchUrl(this, "https://forums.getpaint.net/index.php?showtopic=7291");
         }
 
         private void sldOffset_Scroll(object sender, EventArgs e)
