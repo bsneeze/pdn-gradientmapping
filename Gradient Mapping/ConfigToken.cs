@@ -174,6 +174,26 @@ namespace pyrochild.effects.gradientmapping
             gradient = (Gradient)toCopy.gradient.Clone();
         }
 
+        public static XmlAttributeOverrides GetXao()
+        {
+            XmlAttributeOverrides xao = new XmlAttributeOverrides();
+
+            //ignore Bgra as it's redundant
+            XmlAttributes xa = new XmlAttributes();
+            xa.XmlIgnore = true;
+            xao.Add(typeof(ColorBgra), "Bgra", xa);
+
+            //set these as attributes rather than elements
+            xa = new XmlAttributes();
+            xa.XmlAttribute = new XmlAttributeAttribute();
+            xao.Add(typeof(ColorBgra), "B", xa);
+            xao.Add(typeof(ColorBgra), "G", xa);
+            xao.Add(typeof(ColorBgra), "R", xa);
+            xao.Add(typeof(ColorBgra), "A", xa);
+
+            return xao;
+        }
+
         public override object Clone()
         {
             return new ConfigToken(this);

@@ -35,47 +35,56 @@ namespace pyrochild.effects.common
 
         void fsw_Event(object sender, EventArgs e)
         {
-            if (!EventsSuspended)
+            // this is raised on a thread pool thread, so don't touch anything here. just hand off
+            // to the UI thread.
+            if (IsDisposed || !IsHandleCreated)
             {
-                Form owner = this.FindForm();
-                if (owner != null)
-                {
-                    if (!owner.IsHandleCreated)
-                    {
-                        owner.CreateControl();
-                    }
-                    Action action = delegate
-                    {
-                        SuspendEvents();
-                        string name = CurrentName;
-                        T preset = current;
-                        PopulateDropdown();
-                        current = preset;
-                        SetPresetByName(name);
-                        ResumeEvents();
-                    };
-                    try
-                    {
-                        this.Invoke(action);
-                    }
-                    catch { }
-                }
+                return;
             }
+
+            Action action = delegate
+            {
+                if (!EventsSuspended && !IsDisposed)
+                {
+                    SuspendEvents();
+                    string name = CurrentName;
+                    T preset = current;
+                    PopulateDropdown();
+                    current = preset;
+                    SetPresetByName(name);
+                    ResumeEvents();
+                }
+            };
+            try
+            {
+                this.BeginInvoke(action);
+            }
+            catch { }
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
             var dir = GetPresetDir();
-            if (dir != null)
+            if (dir != null && fsw == null)
             {
-                fsw = new FileSystemWatcher(GetPresetDir());
+                fsw = new FileSystemWatcher(dir, "*.xml");
                 fsw.Changed += new FileSystemEventHandler(fsw_Event);
                 fsw.Created += new FileSystemEventHandler(fsw_Event);
                 fsw.Deleted += new FileSystemEventHandler(fsw_Event);
                 fsw.Renamed += new RenamedEventHandler(fsw_Event);
                 fsw.EnableRaisingEvents = true;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && fsw != null)
+            {
+                fsw.Dispose();
+                fsw = null;
+            }
+            base.Dispose(disposing);
         }
 
         private void PopulateDropdown()
@@ -108,9 +117,26 @@ namespace pyrochild.effects.common
             string name;
             if (InputBox.Show(this, "Type a name for the new preset.", null, null, Path.GetInvalidFileNameChars(), InputBox.ValidationMode.Blacklist, out name) == DialogResult.OK)
             {
+                // the input box only filters typed characters, not pasted ones
+                name = name.StripIllegalPathChars().Trim();
                 if (name == "") name = "Untitled Preset";
 
-                var path = Path.Combine(GetPresetDir(), Path.ChangeExtension(name, ".xml"));
+                // presets are found by name, and this one is the unsaved settings
+                if (name.ToUpperInvariant() == "CUSTOM")
+                {
+                    MessageBox.Show(this, "\"Custom\" can't be used as a preset name. Please choose a different name.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var dir = GetPresetDir();
+                if (dir == null)
+                {
+                    MessageBox.Show(this, "Error saving preset:\n\nCouldn't access Preset directory", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // not Path.ChangeExtension, which would cut the name off at its last '.'
+                var path = Path.Combine(dir, name + ".xml");
                 if (!File.Exists(path)
                     || MessageBox.Show(
                         this,
@@ -121,15 +147,14 @@ namespace pyrochild.effects.common
                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     FileStream fs = null;
+                    SuspendEvents();
                     try
                     {
-                        SuspendEvents();
                         fs = new FileStream(path, FileMode.Create);
                         xmlSerializer.Serialize(fs, current);
                         fs.Close();
                         T preset = current;
                         PopulateDropdown();
-                        ResumeEvents();
                         current = preset;
                         SetPresetByName(name);
                     }
@@ -143,6 +168,7 @@ namespace pyrochild.effects.common
                         {
                             fs.Dispose();
                         }
+                        ResumeEvents();
                     }
                 }
             }
@@ -150,23 +176,28 @@ namespace pyrochild.effects.common
 
         private void ManagePresets()
         {
-            ((PaintDotNet.AppModel.IShellService)Services.GetService(typeof(PaintDotNet.AppModel.IShellService))).LaunchFolder(this, GetPresetDir());
+            var dir = GetPresetDir();
+            if (dir != null)
+            {
+                ((PaintDotNet.AppModel.IShellService)Services.GetService(typeof(PaintDotNet.AppModel.IShellService))).LaunchFolder(this, dir);
+            }
         }
 
         private PresetDropdownItem<T>[] LoadPresets()
         {
             var ret = new List<PresetDropdownItem<T>>();
+            var invalid = new List<PresetDropdownItem<T>>();
             var dir = GetPresetDir();
             if (dir == null)
             {
-                throw new IOException("Couldn't access Preset directory");
+                return ret.ToArray();
             }
-            foreach (string file in Directory.GetFiles(dir))
+            foreach (string file in Directory.GetFiles(dir, "*.xml"))
             {
                 FileStream fs = null;
                 try
                 {
-                    fs = new FileStream(file, FileMode.Open);
+                    fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
                     T t = LoadPreset(fs);
                     if (t != null)
                     {
@@ -177,14 +208,23 @@ namespace pyrochild.effects.common
                             comboBox.Items.RemoveAt(0);
                             comboBox.Items.Insert(0, new PresetDropdownItem<T>("Default", defaultPreset));
                         }
-                        else
+                        else if (name.ToUpperInvariant() != "CUSTOM")
                         {
                             ret.Add(new PresetDropdownItem<T>(name, t));
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    // list it anyway, so a broken preset doesn't just vanish. selecting it says why.
+                    string filename = Path.GetFileName(file);
+                    string message = e.InnerException != null ? e.Message + "\n" + e.InnerException.Message : e.Message;
+                    invalid.Add(new PresetDropdownItem<T>(
+                        Path.GetFileNameWithoutExtension(file) + " (couldn't load)",
+                        delegate
+                        {
+                            MessageBox.Show(this, "The preset file \"" + filename + "\" couldn't be loaded:\n\n" + message, "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }));
                 }
                 finally
                 {
@@ -195,6 +235,7 @@ namespace pyrochild.effects.common
                 }
             }
 
+            ret.AddRange(invalid);
             return ret.ToArray();
         }
 
@@ -207,10 +248,24 @@ namespace pyrochild.effects.common
         object lastsel;
         void comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!EventsSuspended)
+            var item = comboBox.SelectedItem as PresetDropdownItem<T>;
+            if (item == null)
+            {
+                return;
+            }
+
+            if (EventsSuspended)
+            {
+                // keep track of selections made in code, so there's something valid to go back to
+                // after a command
+                if (item.Type == PresetDropdownItem<T>.ItemType.Preset)
+                {
+                    lastsel = item;
+                }
+            }
+            else
             {
                 SuspendEvents();
-                var item = comboBox.SelectedItem as PresetDropdownItem<T>;
                 switch (item.Type)
                 {
                     case PresetDropdownItem<T>.ItemType.Separator:
@@ -219,7 +274,11 @@ namespace pyrochild.effects.common
                         {
                             item.Action();
                         }
-                        comboBox.SelectedItem = lastsel;
+                        // the command may have selected something itself (saving a preset does)
+                        if (comboBox.SelectedItem == item)
+                        {
+                            comboBox.SelectedItem = lastsel;
+                        }
                         break;
                     case PresetDropdownItem<T>.ItemType.Preset:
                         OnPresetChanged(/*item*/);
@@ -308,7 +367,7 @@ namespace pyrochild.effects.common
                                     if (itemtogoto.Type == PresetDropdownItem<T>.ItemType.Preset)
                                         comboBox.SelectedIndex += 2;
                                     break;
-                                default:
+                                case PresetDropdownItem<T>.ItemType.Preset:
                                     comboBox.SelectedIndex++;
                                     break;
                             }
@@ -348,22 +407,28 @@ namespace pyrochild.effects.common
                         {
                             case PresetDropdownItem<T>.ItemType.Separator:
                                 float midy = (e.Bounds.Top + e.Bounds.Bottom) / 2f;
-                                e.Graphics.DrawLine(
-                                    new Pen(SystemColors.Highlight),
-                                    e.Bounds.Left + 5,
-                                    midy,
-                                    e.Bounds.Right - 5,
-                                    midy);
+                                using (Pen pen = new Pen(SystemColors.Highlight))
+                                {
+                                    e.Graphics.DrawLine(
+                                        pen,
+                                        e.Bounds.Left + 5,
+                                        midy,
+                                        e.Bounds.Right - 5,
+                                        midy);
+                                }
                                 break;
 
                             default:
                                 e.DrawBackground();
                                 e.DrawFocusRectangle();
-                                e.Graphics.DrawString(
-                                    item.Name,
-                                    comboBox.Font,
-                                    new SolidBrush(e.ForeColor),
-                                    e.Bounds);
+                                using (SolidBrush brush = new SolidBrush(e.ForeColor))
+                                {
+                                    e.Graphics.DrawString(
+                                        item.Name,
+                                        comboBox.Font,
+                                        brush,
+                                        e.Bounds);
+                                }
                                 break;
                         }
                         break;
@@ -518,7 +583,7 @@ namespace pyrochild.effects.common
 
         public void AddPreset(T preset, string name)
         {
-            var filename = Path.ChangeExtension(name, ".xml");
+            var filename = name + ".xml";
             var dir = GetPresetDir();
             if (dir != null)
             {
@@ -531,6 +596,30 @@ namespace pyrochild.effects.common
                     }
                     PopulateDropdown();
                 }
+            }
+        }
+
+        private const string installedDefaultsFileName = "installed-defaults.txt";
+
+        /// <summary>
+        /// Adds a built-in preset the first time it's seen. The names already added are kept in a
+        /// list in the preset directory, so a built-in preset the user deletes stays deleted.
+        /// </summary>
+        public void AddDefaultPreset(T preset, string name)
+        {
+            var dir = GetPresetDir();
+            if (dir != null)
+            {
+                try
+                {
+                    var listPath = Path.Combine(dir, installedDefaultsFileName);
+                    if (!File.Exists(listPath) || Array.IndexOf(File.ReadAllLines(listPath), name) < 0)
+                    {
+                        AddPreset(preset, name);
+                        File.AppendAllLines(listPath, new string[] { name });
+                    }
+                }
+                catch { }
             }
         }
 
