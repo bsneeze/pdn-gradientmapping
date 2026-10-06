@@ -6,8 +6,8 @@ Forum thread: https://forums.paint.net/index.php?/topic/6265-gradient-mapping/
 
 ## Installing
 
-1. Close Paint.NET.
-2. Copy `Gradient Mapping.dll` into `Documents\paint.net App Files\Effects\`. Create the folder if it doesn't exist.
+1. Download the zip from the [latest release](https://github.com/bsneeze/pdn-gradientmapping/releases/latest) and close Paint.NET.
+2. Copy `Gradient Mapping.dll` from the zip into `Documents\paint.net App Files\Effects\`. Create the folder if it doesn't exist.
 3. Start Paint.NET. The effect is under **Adjustments > Gradient Mapping**.
 
 This version is built for Paint.NET 5.1.
@@ -83,7 +83,7 @@ The plugin installs a set of built-in presets the first time it runs. If you del
 
 ## Building
 
-You need the .NET SDK and Paint.NET installed in `C:\Program Files\Paint.NET`, which is where the project looks for the Paint.NET assemblies.
+You need the .NET SDK (9 or later) and Paint.NET. The project looks for the Paint.NET assemblies in `C:\Program Files\Paint.NET\`; if yours is somewhere else, add `-p:PdnDir=D:\path\to\Paint.NET\` (keep the trailing backslash).
 
 ```
 dotnet build
@@ -97,7 +97,13 @@ The build copies the plugin to `Documents\paint.net App Files\Effects\`. Close P
 dotnet test
 ```
 
-The tests cover the gradient, color blending, channel mapping, and preset files. They need the .NET 10 runtime. The dialog and its controls aren't covered and have to be checked by hand in Paint.NET.
+The tests cover the gradient, color blending, channel mapping, and preset files. The dialog and its controls aren't covered and have to be checked by hand in Paint.NET.
+
+### CI and releases
+
+Every push and pull request is built and tested by GitHub Actions (`.github/workflows/ci.yml`), against Paint.NET's portable build rather than an installed copy.
+
+A release is made by running the **Release** workflow by hand from the Actions tab, on `master`. It works out the version from the commit's date, builds and tests, and publishes a zip of the plugin with the top section of `RELEASE_NOTES.md` as the notes. Ticking **Beta** publishes the Debug build as a pre-release instead, from any branch.
 
 ## License
 

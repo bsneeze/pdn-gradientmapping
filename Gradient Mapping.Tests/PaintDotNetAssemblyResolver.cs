@@ -13,7 +13,7 @@ namespace pyrochild.effects.gradientmapping.tests
         {
             string dir = typeof(PaintDotNetAssemblyResolver).Assembly
                 .GetCustomAttributes<AssemblyMetadataAttribute>()
-                .First(a => a.Key == "PaintDotNetDir").Value!;
+                .First(a => a.Key == "PdnDir").Value!;
 
             AssemblyLoadContext.Default.Resolving += (context, name) =>
             {
