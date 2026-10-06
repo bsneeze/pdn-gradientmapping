@@ -73,12 +73,6 @@
     <EmbeddedResource Include="icon.png" />
   </ItemGroup>
 
-  <Target Name="GradientMappingRenameLockedOutput" BeforeTargets="CoreCompile">
-    <PropertyGroup>
-      <GradientMappingLockedStamp>$([System.DateTime]::Now.ToString("yyyyMMddHHmmss"))</GradientMappingLockedStamp>
-    </PropertyGroup>
-    <Move SourceFiles="$(TargetPath)" DestinationFiles="$(TargetPath).$(GradientMappingLockedStamp).locked" Condition="Exists('$(TargetPath)')" ContinueOnError="true" />
-  </Target>
 
   <PropertyGroup>
     <GradientMappingEffectsDir>$(USERPROFILE)\Documents\paint.net App Files\Effects\</GradientMappingEffectsDir>
