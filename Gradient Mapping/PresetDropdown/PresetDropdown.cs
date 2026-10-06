@@ -601,6 +601,14 @@ namespace pyrochild.effects.common
 
         private const string installedDefaultsFileName = "installed-defaults.txt";
 
+        private static readonly string[] installedDefaultsNote =
+        {
+            "# Built-in presets that have already been added to this folder.",
+            "# A name listed here isn't added again, so a built-in preset you delete stays deleted.",
+            "# To get one back, remove its name from this list and reopen the effect.",
+            "",
+        };
+
         /// <summary>
         /// Adds a built-in preset the first time it's seen. The names already added are kept in a
         /// list in the preset directory, so a built-in preset the user deletes stays deleted.
@@ -613,7 +621,14 @@ namespace pyrochild.effects.common
                 try
                 {
                     var listPath = Path.Combine(dir, installedDefaultsFileName);
-                    if (!File.Exists(listPath) || Array.IndexOf(File.ReadAllLines(listPath), name) < 0)
+                    string[] lines = File.Exists(listPath) ? File.ReadAllLines(listPath) : new string[0];
+                    if (lines.Length == 0 || lines[0] != installedDefaultsNote[0])
+                    {
+                        var withNote = new List<string>(installedDefaultsNote);
+                        withNote.AddRange(lines);
+                        File.WriteAllLines(listPath, withNote);
+                    }
+                    if (Array.IndexOf(lines, name) < 0)
                     {
                         AddPreset(preset, name);
                         File.AppendAllLines(listPath, new string[] { name });
