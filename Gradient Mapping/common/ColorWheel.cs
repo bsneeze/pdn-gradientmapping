@@ -83,7 +83,26 @@ namespace pyrochild.effects.common
         /// </summary>
         protected override void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                DisposeRenderSurface();
+            }
             base.Dispose(disposing);
+        }
+
+        private void DisposeRenderSurface()
+        {
+            // the bitmap aliases the surface's memory, so it goes first
+            if (renderBitmap != null)
+            {
+                renderBitmap.Dispose();
+                renderBitmap = null;
+            }
+            if (renderSurface != null)
+            {
+                renderSurface.Dispose();
+                renderSurface = null;
+            }
         }
 
         //protected override void OnLoad(EventArgs e)
@@ -166,8 +185,7 @@ namespace pyrochild.effects.common
 
         private void InitRenderSurface()
         {
-            if (renderSurface != null)
-                renderSurface.Dispose();
+            DisposeRenderSurface();
 
             int wheelDiameter = Math.Min(Width, Height);
             radius = wheelDiameter / 2;
@@ -354,11 +372,7 @@ namespace pyrochild.effects.common
         {
             base.OnResize(e);
 
-            if (renderSurface != null) // && (ComputeRadius(Size) != ComputeRadius(this.renderSurface.Size)))
-            {
-                renderSurface.Dispose();
-                renderSurface = null;
-            }
+            DisposeRenderSurface();
 
             Invalidate();
         }
