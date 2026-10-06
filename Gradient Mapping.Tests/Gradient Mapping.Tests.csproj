@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>pyrochild.effects.gradientmapping.tests</RootNamespace>
+    <AssemblyName>Gradient Mapping.Tests</AssemblyName>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+    <PaintDotNetDir>C:\Program Files\Paint.NET\</PaintDotNetDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gradient Mapping\Gradient Mapping.csproj" />
+  </ItemGroup>
+
+  <!-- Copied locally so test discovery can load them. PaintDotNetAssemblyResolver finds their own dependencies in the install directory. -->
+  <ItemGroup>
+    <Reference Include="PaintDotNet.Base">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Base.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.Core">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.Data">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.Effects">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Effects.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.Effects.Core">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Effects.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.Primitives">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.ComponentModel">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.ComponentModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.ObjectModel">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.ObjectModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PaintDotNet.Windows">
+      <HintPath>$(PaintDotNetDir)PaintDotNet.Windows.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="PaintDotNetDir" Value="$(PaintDotNetDir)" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

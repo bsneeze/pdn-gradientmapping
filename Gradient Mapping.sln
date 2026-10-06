@@ -1,30 +1,59 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gradient Mapping", "Gradient Mapping\Gradient Mapping.csproj", "{B629AEF8-5C89-46A5-8C7F-982C99A8D238}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gradient Mapping.Tests", "Gradient Mapping.Tests\Gradient Mapping.Tests.csproj", "{C8ADF539-BCD9-4684-AC71-77D24F01BE30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Custom|Any CPU = Custom|Any CPU
 		Custom|x64 = Custom|x64
+		Custom|x86 = Custom|x86
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Custom|Any CPU.ActiveCfg = Custom|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Custom|Any CPU.Build.0 = Custom|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Custom|x64.ActiveCfg = Custom|x64
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Custom|x64.Build.0 = Custom|x64
+		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Custom|x86.ActiveCfg = Custom|Any CPU
+		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Custom|x86.Build.0 = Custom|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Debug|x64.ActiveCfg = Debug|x64
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Debug|x64.Build.0 = Debug|x64
+		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Debug|x86.Build.0 = Debug|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Release|x64.ActiveCfg = Release|x64
 		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Release|x64.Build.0 = Release|x64
+		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Release|x86.ActiveCfg = Release|Any CPU
+		{B629AEF8-5C89-46A5-8C7F-982C99A8D238}.Release|x86.Build.0 = Release|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Custom|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Custom|Any CPU.Build.0 = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Custom|x64.ActiveCfg = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Custom|x64.Build.0 = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Custom|x86.ActiveCfg = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Custom|x86.Build.0 = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Debug|x64.Build.0 = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Release|x64.ActiveCfg = Release|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Release|x64.Build.0 = Release|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8ADF539-BCD9-4684-AC71-77D24F01BE30}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
