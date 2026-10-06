@@ -220,7 +220,15 @@ namespace pyrochild.effects.gradientmapping
                 token.Wrap = chkWrapOffset.Checked;
                 token.LockAlpha = chkLockAlpha.Checked;
                 token.Gradient = gradientControl.Gradient;
-                if (token.Preset == presetDropdown.CurrentName)
+
+                // only leave the selected preset if the settings no longer match it. gradient
+                // edits are handled in gradientControl_ValueChanged.
+                ConfigToken preset = presetDropdown.Current;
+                if (preset != null
+                    && (preset.InputChannel != token.InputChannel
+                        || preset.Offset != token.Offset
+                        || preset.Wrap != token.Wrap
+                        || preset.LockAlpha != token.LockAlpha))
                 {
                     presetDropdown.Current = token;
                 }
