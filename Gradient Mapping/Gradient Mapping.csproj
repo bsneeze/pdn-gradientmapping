@@ -6,6 +6,9 @@
     <RootNamespace>pyrochild.effects.gradientmapping</RootNamespace>
     <AssemblyName>Gradient Mapping</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Where Paint.NET is installed. Override with -p:PdnDir=...\ (keep the trailing backslash). -->
+    <PdnDir Condition="'$(PdnDir)' == ''">C:\Program Files\Paint.NET\</PdnDir>
     <NoWarn>$(NoWarn);WFO1000</NoWarn>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
 
@@ -15,47 +18,52 @@
     <Company>Zach Walker, a.k.a. pyrochild</Company>
     <Copyright>Copyright © 2007-2026 Zach Walker</Copyright>
 
-    <!-- Build/Revision come from the build date. -->
+    <!--
+      VersionPrefix is the Paint.NET version this is built for. The rest, yyMM.ddHH, tells builds
+      apart: the time of the build, unless a release passes the stamp worked out from its commit
+      (-p:GradientMappingBuildStamp=2610.0614; see .github/workflows/release.yml).
+    -->
     <VersionPrefix>5.1</VersionPrefix>
-    <AssemblyVersion>$(VersionPrefix).$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(ddHH))</AssemblyVersion>
+    <GradientMappingBuildStamp Condition="'$(GradientMappingBuildStamp)' == ''">$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(ddHH))</GradientMappingBuildStamp>
+    <AssemblyVersion>$(VersionPrefix).$(GradientMappingBuildStamp)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="PaintDotNet.Base">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Base.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Base.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.Core">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Core.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.Data">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Data.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Data.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.Effects">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Effects.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Effects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.Effects.Core">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Effects.Core.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Effects.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.Primitives">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Primitives.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Primitives.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.ComponentModel">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.ComponentModel.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.ComponentModel.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.ObjectModel">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.ObjectModel.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.ObjectModel.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PaintDotNet.Windows">
-      <HintPath>C:\Program Files\Paint.NET\PaintDotNet.Windows.dll</HintPath>
+      <HintPath>$(PdnDir)PaintDotNet.Windows.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
