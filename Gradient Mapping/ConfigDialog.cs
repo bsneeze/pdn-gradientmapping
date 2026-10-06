@@ -34,7 +34,7 @@ namespace pyrochild.effects.gradientmapping
         {
             if (presetDropdown != null) return;
 
-            presetDropdown = new PresetDropdown<ConfigToken>(Services, Path.GetFileNameWithoutExtension(GetType().Assembly.Location), freshToken, GetXao());
+            presetDropdown = new PresetDropdown<ConfigToken>(Services, Path.GetFileNameWithoutExtension(GetType().Assembly.Location), freshToken, ConfigToken.GetXao());
             //
             // presetDropdown
             //
@@ -69,37 +69,37 @@ namespace pyrochild.effects.gradientmapping
             rainbow.Add(2 / 3.0, ColorBgra.Blue);
             rainbow.Add(5 / 6.0, ColorBgra.Indigo);
             rainbow.Add(1,  ColorBgra.Violet);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = rainbow }, "Rainbow");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = rainbow }, "Rainbow");
 
             Gradient highcontrast = new Gradient();
             highcontrast.Add(0.6, ColorBgra.Black);
             highcontrast.Add(0.75, ColorBgra.White);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = highcontrast }, "High Contrast");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = highcontrast }, "High Contrast");
 
             Gradient hot = new Gradient();
             hot.Add(0.2, ColorBgra.Black);
             hot.Add(0.75, ColorBgra.Red);
             hot.Add(0.95, ColorBgra.Yellow);
             hot.Add(1, ColorBgra.White);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = hot }, "Hot");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = hot }, "Hot");
 
             Gradient synthwave = new Gradient();
             synthwave.Add(0, ColorBgra.Indigo);
             synthwave.Add(1 / 3.0, ColorBgra.DeepPink);
             synthwave.Add(2 / 3.0, ColorBgra.OrangeRed);
             synthwave.Add(1, ColorBgra.Cyan);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = synthwave }, "Synthwave");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = synthwave }, "Synthwave");
 
             Gradient sepia = new Gradient();
             sepia.Add(0, ColorBgra.FromBgr(9, 17, 29));
             sepia.Add(0.5, ColorBgra.FromBgr(20, 66, 112));
             sepia.Add(1, ColorBgra.FromBgr(151, 196, 222));
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = sepia }, "Sepia");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = sepia }, "Sepia");
 
             Gradient duotoneBlue = new Gradient();
             duotoneBlue.Add(0, ColorBgra.Navy);
             duotoneBlue.Add(1, ColorBgra.White);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = duotoneBlue }, "Duotone Blue");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = duotoneBlue }, "Duotone Blue");
 
             Gradient thermal = new Gradient();
             thermal.Add(0, ColorBgra.Black);
@@ -108,64 +108,44 @@ namespace pyrochild.effects.gradientmapping
             thermal.Add(0.6, ColorBgra.Yellow);
             thermal.Add(0.8, ColorBgra.Red);
             thermal.Add(1, ColorBgra.White);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = thermal }, "Thermal");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = thermal }, "Thermal");
 
             Gradient cyanotype = new Gradient();
             cyanotype.Add(0, ColorBgra.FromBgr(60, 20, 10));
             cyanotype.Add(1, ColorBgra.FromBgr(250, 235, 220));
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = cyanotype }, "Cyanotype");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = cyanotype }, "Cyanotype");
 
             Gradient posterizeGrays = new Gradient();
             posterizeGrays.Add(0, ColorBgra.Black);
             posterizeGrays.Add(1 / 3.0, ColorBgra.FromBgr(85, 85, 85));
             posterizeGrays.Add(2 / 3.0, ColorBgra.FromBgr(170, 170, 170));
             posterizeGrays.Add(1, ColorBgra.White);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = posterizeGrays }, "Posterize Grays");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = posterizeGrays }, "Posterize Grays");
 
             Gradient cottonCandy = new Gradient();
             cottonCandy.Add(0, ColorBgra.FromBgr(213, 182, 255));
             cottonCandy.Add(0.5, ColorBgra.FromBgr(230, 170, 200));
             cottonCandy.Add(1, ColorBgra.FromBgr(255, 220, 150));
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = cottonCandy }, "Cotton Candy");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = cottonCandy }, "Cotton Candy");
 
             Gradient toxic = new Gradient();
             toxic.Add(0, ColorBgra.Black);
             toxic.Add(0.5, ColorBgra.FromBgr(20, 255, 100));
             toxic.Add(1, ColorBgra.GreenYellow);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = toxic }, "Toxic");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = toxic }, "Toxic");
 
             Gradient fire = new Gradient();
             fire.Add(0, ColorBgra.Black);
             fire.Add(0.4, ColorBgra.Red);
             fire.Add(0.7, ColorBgra.OrangeRed);
             fire.Add(1, ColorBgra.Yellow);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = fire }, "Fire");
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = fire }, "Fire");
 
             Gradient vaporwave = new Gradient();
             vaporwave.Add(0, ColorBgra.Cyan);
             vaporwave.Add(0.5, ColorBgra.Magenta);
             vaporwave.Add(1, ColorBgra.Indigo);
-            presetDropdown.AddPreset(new ConfigToken() { Gradient = vaporwave }, "Vaporwave");
-        }
-
-        private static XmlAttributeOverrides GetXao()
-        {
-            XmlAttributeOverrides xao = new XmlAttributeOverrides();
-
-            //ignore Bgra as it's redundant
-            XmlAttributes xa = new XmlAttributes();
-            xa.XmlIgnore = true;
-            xao.Add(typeof(ColorBgra), "Bgra", xa);
-
-            //set these as attributes rather than elements
-            xa = new XmlAttributes();
-            xa.XmlAttribute = new XmlAttributeAttribute();
-            xao.Add(typeof(ColorBgra), "B", xa);
-            xao.Add(typeof(ColorBgra), "G", xa);
-            xao.Add(typeof(ColorBgra), "R", xa);
-            xao.Add(typeof(ColorBgra), "A", xa);
-
-            return xao;
+            presetDropdown.AddDefaultPreset(new ConfigToken() { Gradient = vaporwave }, "Vaporwave");
         }
 
         //void presetDropdown_DrawItem(object sender, DrawItemEventArgs e)
@@ -240,7 +220,15 @@ namespace pyrochild.effects.gradientmapping
                 token.Wrap = chkWrapOffset.Checked;
                 token.LockAlpha = chkLockAlpha.Checked;
                 token.Gradient = gradientControl.Gradient;
-                if (token.Preset == presetDropdown.CurrentName)
+
+                // only leave the selected preset if the settings no longer match it. gradient
+                // edits are handled in gradientControl_ValueChanged.
+                ConfigToken preset = presetDropdown.Current;
+                if (preset != null
+                    && (preset.InputChannel != token.InputChannel
+                        || preset.Offset != token.Offset
+                        || preset.Wrap != token.Wrap
+                        || preset.LockAlpha != token.LockAlpha))
                 {
                     presetDropdown.Current = token;
                 }
@@ -266,7 +254,7 @@ namespace pyrochild.effects.gradientmapping
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            ((IShellService)Services.GetService(typeof(IShellService))).LaunchUrl(this, "http://forums.getpaint.net/index.php?showtopic=7291");
+            ((IShellService)Services.GetService(typeof(IShellService))).LaunchUrl(this, "https://forums.paint.net/index.php?showtopic=7291");
         }
 
         private void sldOffset_Scroll(object sender, EventArgs e)

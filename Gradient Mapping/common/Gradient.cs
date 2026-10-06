@@ -56,8 +56,14 @@ namespace pyrochild.effects.common
 
         public void Add(double position, ColorBgra color)
         {
-            colors.Add(new GradientColor(position, color));
-            colors.Sort();
+            // insert after any colors already at this position. List.Sort is unstable and could
+            // shuffle control points that share a position.
+            int index = 0;
+            while (index < Count && colors[index].Position <= position)
+            {
+                index++;
+            }
+            colors.Insert(index, new GradientColor(position, color));
         }
 
         public void RemoveAt(int index)
@@ -74,17 +80,23 @@ namespace pyrochild.effects.common
         {
             if (Count > 0)
             {
-                int index1 = 0, index2 = colors.Count - 1;
+                // colors is sorted by position. index1 is the last color at or before position,
+                // index2 is the first color at or after it.
+                int index1 = 0, index2 = -1;
                 for (int i = 0; i < Count; i++)
                 {
-                    if ((colors[i].Position <= position) && (colors[i].Position >= colors[index1].Position))
+                    if (colors[i].Position <= position)
                     {
                         index1 = i;
                     }
-                    if ((colors[i].Position >= position) && (colors[i].Position <= colors[index2].Position))
+                    if (index2 == -1 && colors[i].Position >= position)
                     {
                         index2 = i;
                     }
+                }
+                if (index2 == -1)
+                {
+                    index2 = Count - 1;
                 }
                 if (colors[index1].Position == colors[index2].Position)
                 {
@@ -166,6 +178,38 @@ namespace pyrochild.effects.common
             }
 
             return index;
+        }
+
+        /// <summary>
+        /// Sets the positions of all control points at once. positions[i] is paired with
+        /// the color currently at index i, and the control points are sorted afterwards.
+        /// </summary>
+        public void SetPositions(double[] positions)
+        {
+            for (int i = 0; i < positions.Length; i++)
+            {
+                if (i < Count)
+                {
+                    colors[i] = new GradientColor(positions[i], colors[i].Color);
+                }
+                else
+                {
+                    colors.Add(new GradientColor(positions[i], ColorBgra.Black));
+                }
+            }
+
+            // insertion sort: stable, so control points sharing a position keep their order
+            for (int i = 1; i < Count; i++)
+            {
+                GradientColor gc = colors[i];
+                int j = i - 1;
+                while (j >= 0 && colors[j].Position > gc.Position)
+                {
+                    colors[j + 1] = colors[j];
+                    j--;
+                }
+                colors[j + 1] = gc;
+            }
         }
 
         public double GetPosition(int index)

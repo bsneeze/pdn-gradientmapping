@@ -125,10 +125,12 @@ namespace pyrochild.effects.common
             ValidationMode validationmode,
             out string result)
         {
-            InputBoxForm box = new InputBoxForm(text, defaultValue, caption, validationchars, validationmode);
-            DialogResult retval = box.ShowDialog(owner);
-            result = box.Value;
-            return retval;
+            using (InputBoxForm box = new InputBoxForm(text, defaultValue, caption, validationchars, validationmode))
+            {
+                DialogResult retval = box.ShowDialog(owner);
+                result = box.Value;
+                return retval;
+            }
         }
     }
 }

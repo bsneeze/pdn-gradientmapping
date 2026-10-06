@@ -57,11 +57,6 @@ namespace pyrochild.effects.gradientmapping
 
         protected override unsafe void OnRender(IBitmapEffectOutput output)
         {
-            if (uop == null || !hasGradient)
-            {
-                return;
-            }
-
             RectInt32 bounds = output.Bounds;
 
             using (IEffectInputBitmap<ColorBgra32> srcBitmap = Environment.GetSourceBitmapBgra32())
@@ -71,7 +66,19 @@ namespace pyrochild.effects.gradientmapping
                 RegionPtr<ColorBgra32> srcRegion = new RegionPtr<ColorBgra32>(srcLock.Buffer, srcLock.Size, srcLock.BufferStride);
                 RegionPtr<ColorBgra32> dstRegion = new RegionPtr<ColorBgra32>(dstLock.Buffer, dstLock.Size, dstLock.BufferStride);
 
-                uop.Apply(dstRegion, srcRegion, bounds);
+                if (uop == null || !hasGradient)
+                {
+                    // nothing to map with, so leave the image as it is
+                    long rowBytes = (long)dstRegion.Width * sizeof(ColorBgra32);
+                    for (int y = 0; y < dstRegion.Height; ++y)
+                    {
+                        System.Buffer.MemoryCopy(srcRegion.Rows[bounds.Y + y].Ptr + bounds.X, dstRegion.Rows[y].Ptr, rowBytes, rowBytes);
+                    }
+                }
+                else
+                {
+                    uop.Apply(dstRegion, srcRegion, bounds);
+                }
             }
         }
     }

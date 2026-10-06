@@ -149,9 +149,9 @@ namespace pyrochild.effects.common
             {
                 SuspendEvents();
 
-                int h = (int)(hslider.Value * 360);
-                int s = (int)(sslider.Value * 100);
-                int v = (int)(vslider.Value * 100);
+                int h = (int)Math.Round(hslider.Value * 360);
+                int s = (int)Math.Round(sslider.Value * 100);
+                int v = (int)Math.Round(vslider.Value * 100);
                 hupdown.Value = h;
                 supdown.Value = s;
                 vupdown.Value = v;
@@ -176,10 +176,10 @@ namespace pyrochild.effects.common
             {
                 SuspendEvents();
 
-                byte r = (byte)(rslider.Value * 255);
-                byte g = (byte)(gslider.Value * 255);
-                byte b = (byte)(bslider.Value * 255);
-                byte a = (byte)(aslider.Value * 255);
+                byte r = (byte)Math.Round(rslider.Value * 255);
+                byte g = (byte)Math.Round(gslider.Value * 255);
+                byte b = (byte)Math.Round(bslider.Value * 255);
+                byte a = (byte)Math.Round(aslider.Value * 255);
                 rupdown.Value = r;
                 gupdown.Value = g;
                 bupdown.Value = b;

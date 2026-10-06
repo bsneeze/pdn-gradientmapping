@@ -4,3 +4,5 @@ Gradient Mapping/obj/
 *.suo
 *.lock
 .vs/
+Gradient Mapping.Tests/bin/
+Gradient Mapping.Tests/obj/
