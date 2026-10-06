@@ -180,6 +180,38 @@ namespace pyrochild.effects.common
 
         public void SetColor(int index, ColorBgra color)
         {
+        /// <summary>
+        /// Sets the positions of all control points at once. positions[i] is paired with
+        /// the color currently at index i, and the control points are sorted afterwards.
+        /// </summary>
+        public void SetPositions(double[] positions)
+        {
+            for (int i = 0; i < positions.Length; i++)
+            {
+                if (i < Count)
+                {
+                    colors[i] = new GradientColor(positions[i], colors[i].Color);
+                }
+                else
+                {
+                    colors.Add(new GradientColor(positions[i], ColorBgra.Black));
+                }
+            }
+
+            // insertion sort: stable, so control points sharing a position keep their order
+            for (int i = 1; i < Count; i++)
+            {
+                GradientColor gc = colors[i];
+                int j = i - 1;
+                while (j >= 0 && colors[j].Position > gc.Position)
+                {
+                    colors[j + 1] = colors[j];
+                    j--;
+                }
+                colors[j + 1] = gc;
+            }
+        }
+
             if (index >= 0 && index < Count)
             {
                 GradientColor gc = colors[index];

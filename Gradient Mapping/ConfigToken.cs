@@ -36,6 +36,23 @@ namespace pyrochild.effects.gradientmapping
             }
             set
             {
+                if (positionsSet)
+                {
+                    // Positions came first in the file. keep them and just fill in the colors.
+                    for (int i = 0; i < value.Length; i++)
+                    {
+                        if (i < gradient.Count)
+                        {
+                            gradient.SetColor(i, value[i]);
+                        }
+                        else
+                        {
+                            gradient.Add(1, value[i]);
+                        }
+                    }
+                    return;
+                }
+
                 if (value.Length < gradient.Count) gradient.Clear();
 
                 double space = value.Length > 1 ? 1.0 / (value.Length - 1) : 0;
@@ -68,19 +85,13 @@ namespace pyrochild.effects.gradientmapping
             }
             set
             {
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (i < gradient.Count)
-                    {
-                        gradient.SetPosition(i, value[i]);
-                    }
-                    else
-                    {
-                        gradient.Add(value[i], ColorBgra.Black);
-                    }
-                }
+                gradient.SetPositions(value);
+                positionsSet = true;
             }
         }
+
+        // set while loading from XML, so Colors knows not to spread the colors out evenly
+        private bool positionsSet;
 
         private Channel inputChannel;
         [XmlAttribute]
